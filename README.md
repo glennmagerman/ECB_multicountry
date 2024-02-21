@@ -4,8 +4,8 @@ coordinated by Emmanuel Dhyne, Glenn Magerman, and Alberto Palazzolo
 For any question, feel free to reach out to [Glenn Magerman](glenn.magerman@ulb.be) or [Emmanuel Dhyne](emmanuel.dhyne@nbb.be).
 
 ## 1. Overview
-This project develops a multi-country analysis of firm-to-firm networks for Europe, in the context of the multi-year [Research Network ChaMP](https://www.ecb.europa.eu/pub/economic-research/research-networks/html/champ.en.html) of the European Central Bank.
-This GitHub repository contains all codes to construct the various statistics for the project, from data pre-cleaning, cleaning, harmonization, and descriptive statistics.
+This project develops a multi-country dataset and analysis of firm-to-firm networks for Europe, in the context of the multi-year [Research Network ChaMP](https://www.ecb.europa.eu/pub/economic-research/research-networks/html/champ.en.html) of the European Central Bank.
+This GitHub repository is aimed at the collaborators of the project, and contains all codes to construct the various statistics for the project, from data pre-cleaning, cleaning, harmonization, to descriptive statistics.
 
 
 ## 2. Data availability statement
