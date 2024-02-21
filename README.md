@@ -11,6 +11,11 @@ Section 2 describes the data setup, governance and project workflow.
 
 Section 3 describes the code structure to produced the targeted network statistics. (TBD).
 
+
+TODO as a user:
+1. _main.do: Change the folder location to match that of your working environment.
+2. _master_task0.do: Change the first 2 letters of the datasets by the ISO code of your country.
+
 ## 2. Data
 ### 2.1 Data sources
 For each participating country, firm-to-firm data, firm-level datasets (annual accounts, firm trade, location/sector/age etc.).
@@ -52,10 +57,15 @@ After collecting and synthesizing the results, the NBB partners will present ini
 ### 3.1 General overview
 The project is constructed as modular tasks. Each task has an input (data or previous results), a function (the code), and an output (the result of the code).
 The output of one task can be the input for another task. The entirety of the code structure is a topological sort, with a downstream flow. An output of a task cannot be used as the input of a previous task. Tasks are short, clear and well-defined. Each task also contains a master file, that (i) initializes the task ("erase previous results"), (ii) runs the codes, (iii) creates output. This ensures that there are no previous results that are inconsistent with the current state of the code, which might otherwise percolate throughout the project.
-
-There is one main code script to rule them all. This main script initializes the project. Here you can set the proper folder location to execute all the codes. It also contains all macros that are common to the project (e.g. the time coverage of the data), as well as layout choices for graphs etc. Finally, this script calls the master scripts for each task, which in turn call all the codes within that task.
-
 This structure ensures full reproducibility, minimizes errors, and makes codes very easy to follow. If something needs to be changed, it is clear where one has to look.
 The entire code pipeline can then be submitted to e.g. a journal for its replication packages.
+
+### 3.2 Main script
+There is one main code script to rule them all. This main script initializes the project. Here you can set the proper folder location to execute all the codes. It also contains all macros that are common to the project (e.g. the time coverage of the data), as well as layout choices for graphs etc. Finally, this script calls the master scripts for each task, which in turn call all the codes within that task.
+
+### 3.3 Task 0 - random data
+This task g
+
+
 
 
