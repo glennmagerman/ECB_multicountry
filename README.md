@@ -8,6 +8,7 @@ The goal of this project is to develop key statistics on firm-to-firm networks a
 This GitHub repository is aimed at the collaborators of the project, and contains all codes to construct the various statistics for the project, from data pre-cleaning, cleaning, harmonization, to descriptive statistics.
 
 Section 2 describes the data setup, governance and project workflow. 
+
 Section 3 describes the code structure to produced the targeted network statistics. (TBD).
 
 ## 2. Data
@@ -16,15 +17,22 @@ For each participating country, firm-to-firm data, firm-level datasets (annual a
 
 ### 2.2	Data governance
 **Data security protocols:** The project is a distributed micro-data project. This guarantees that security protocols are satisfied at the partner level, and that no confidential data is shared outside the partner’s premises. All data protection regulations that are in place should be documented by participating country.
+
 **Reporting:** No individual data, nor data points that can be reverse engineered to recover individual firms or transactions will be reported. Reporting of distributions is such that at least 5 observations are within each cell (e.g. sector-year observations). Results will be uploaded to a central, secure platform.
 
 ### 2.3 Coding standards
 **Language:** Coding will be in Python. NCBs which are using Stata 16 or newer will be able to run the python code within their Stata environment.
+
 **Workflow:** NBB collaborators will write the codes, and send these to the individual partners to be run on their datasets. Output, consistent with data security protocols, will be reported back to the NBB. 
+
 **Code templates:** Each country will receive the same code to be run on their own data. Coding etiquette is standardized, and includes codes for data cleaning, analysis, and reporting scripts. 
+
 **Data harmonization:** Collaboration rules to be implemented (e.g. naming variables, files, etc.)
+
 **Version control:** We use GitHub for version control of codes. 
+
 **Documentation:** We will provide thorough documentation and guidelines for the local officials to execute their code, interpret results, and troubleshoot common issues.
+
 **Technology infrastructure:** A description of the computing environment is required to ensure local partners have the necessary computing resources to run the analyses. 
 
 ### 2.4. Training and support
