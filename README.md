@@ -8,6 +8,7 @@ The goal of this project is to develop key statistics on firm-to-firm networks a
 This GitHub repository is aimed at the collaborators of the project, and contains all codes to construct the various statistics for the project, from data pre-cleaning, cleaning, harmonization, to descriptive statistics.
 
 Section 2 describes the data setup, governance and project workflow. 
+Section 3 describes the code structure to produced the targeted network statistics. (TBD).
 
 ## 2. Data
 ### 2.1 Data sources
