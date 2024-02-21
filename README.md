@@ -53,4 +53,9 @@ After collecting and synthesizing the results, the NBB partners will present ini
 The project is constructed as modular tasks. Each task has an input (data or previous results), a function (the code), and an output (the result of the code).
 The output of one task can be the input for another task. The entirety of the code structure is a topological sort, with a downstream flow. An output of a task cannot be used as the input of a previous task. Tasks are short, clear and well-defined. Each task also contains a master file, that (i) initializes the task ("erase previous results"), (ii) runs the codes, (iii) creates output. This ensures that there are no previous results that are inconsistent with the current state of the code, which might otherwise percolate throughout the project.
 
+There is one main code script to rule them all. This main script initializes the project. Here you can set the proper folder location to execute all the codes. It also contains all macros that are common to the project (e.g. the time coverage of the data), as well as layout choices for graphs etc. Finally, this script calls the master scripts for each task, which in turn call all the codes within that task.
+
+This structure ensures full reproducibility, minimizes errors, and makes codes very easy to follow. If something needs to be changed, it is clear where one has to look.
+The entire code pipeline can then be submitted to e.g. a journal for its replication packages.
+
 
