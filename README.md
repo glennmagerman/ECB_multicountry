@@ -65,7 +65,7 @@ The entire code pipeline can then be submitted to e.g. a journal for its replica
 There is one main code script to rule them all. This main script initializes the project. Here you can set the proper folder location to execute all the codes. It also contains all macros that are common to the project (e.g. the time coverage of the data), as well as layout choices for graphs etc. Finally, this script calls the master scripts for each task, which in turn call all the codes within that task.
 
 ### 3.3 Task 0 - random data
-This task g
+This task generates random datasets that have the same variable names as in the real data used for this project. Please change the first 2 letters of the name of the dataset to reflect the 2-letter ISO code of your country. The number of firms and linke can be changed at will to test and debug codes.
 
 
 
