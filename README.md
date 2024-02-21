@@ -39,6 +39,7 @@ The project is rolled out for all partners across all data.
 ### 2.7	Reporting
 After collecting and synthesizing the results, the NBB partners will present initial results for reporting, to be discussed with the partners. Upon agreement, results are written into an article, that can be checked against data and reporting protocols of each partner, for publication as ECB WP.
 
+## 3. Code structure
 
 
 
