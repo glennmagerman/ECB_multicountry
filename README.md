@@ -49,5 +49,6 @@ After collecting and synthesizing the results, the NBB partners will present ini
 
 ## 3. Code structure
 
-
+### 3.1 General overview
+The project is constructed as modular tasks. Each task has an input (data or previous results), a function (the code), and an output (the result of the code).
 
