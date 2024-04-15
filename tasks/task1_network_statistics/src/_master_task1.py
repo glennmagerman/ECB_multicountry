@@ -32,6 +32,12 @@ for folder in folders:
     else:
         print(f"Folder '{folder}' already exists.")
 
+if not os.path.exists( os.path.join(abs_path, 'task1_network_statistics','input') ):
+    os.makedirs( os.path.join(abs_path, 'task1_network_statistics','input') )
+    print("Folder 'input' created successfully.")
+else:
+    print("Folder 'input' already exists.")
+
 # Execute subtasks
 exec( open(os.path.join(abs_path, 'task1_network_statistics','src','1_load_data.py' )).read() )
 exec( open(os.path.join(abs_path, 'task1_network_statistics','src','2_sum_stat.py' )).read() )
