@@ -1,7 +1,7 @@
 # ECB multi-country B2B analysis 
 coordinated by Emmanuel Dhyne, Glenn Magerman, and Alberto Palazzolo
 
-For any question, feel free to reach out to [Glenn Magerman](glenn.magerman@ulb.be) or [Emmanuel Dhyne](emmanuel.dhyne@nbb.be).
+For any question, feel free to reach out to [Glenn Magerman](glenn.magerman@ulb.be), [Alberto Palazzolo](alberto.palazzolo@nbb.be) or [Emmanuel Dhyne](emmanuel.dhyne@nbb.be).
 
 ## 1. Overview
 The goal of this project is to develop key statistics on firm-to-firm networks across multiple EU countries in the context of the multi-year [Research Network ChaMP](https://www.ecb.europa.eu/pub/economic-research/research-networks/html/champ.en.html) of the European Central Bank.
