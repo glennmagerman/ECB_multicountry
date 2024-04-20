@@ -9,13 +9,7 @@ This GitHub repository is aimed at the collaborators of the project, and contain
 
 Section 2 describes the data setup, governance and project workflow. 
 
-Section 3 describes the code structure to produced the targeted network statistics. (TBD).
-
-
-TODO as a user:
-1. _main.do: Change the folder location to match that of your working environment.
-2. _main.do: if your server is not connected to the internet, manually install the Stata ado packages to the proper folder.
-3. _master_task0.do: Change the first 2 letters of the datasets by the ISO code of your country.
+Section 3 describes the code structure to produced the targeted network statistics.
 
 ## 2. Data
 ### 2.1 Data sources
