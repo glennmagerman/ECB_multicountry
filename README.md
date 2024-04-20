@@ -61,11 +61,23 @@ The output of one task can be the input for another task. The entirety of the co
 This structure ensures full reproducibility, minimizes errors, and makes codes very easy to follow. If something needs to be changed, it is clear where one has to look.
 The entire code pipeline can then be submitted to e.g. a journal for its replication packages.
 
-### 3.2 Main script
-There is one main code script to rule them all. This main script initializes the project. Here you can set the proper folder location to execute all the codes. It also contains all macros that are common to the project (e.g. the time coverage of the data), as well as layout choices for graphs etc. Finally, this script calls the master scripts for each task, which in turn call all the codes within that task.
+### 3.2 Getting started
 
-### 3.3 Task 0 - random data
-This task generates random datasets that have the same variable names as in the real data used for this project. Please change the first 2 letters of the name of the dataset to reflect the 2-letter ISO code of your country. The number of firms and linke can be changed at will to test and debug codes.
+#### 3.2.1 Required ibraries
+Before running the code, please make sure that the following libraries are correctly installed in your system:
+os, sys, shutil, pandas, numpy, matplotlib, networkx, seaborn, scikit-learn, linearmodels, statsmodels, powerlaw.
+
+### 3.2.2 Structure of the data
+The B2B transactions dataset should be a panel containing the following variables: 'year', 'vat_i', 'vat_j', 'sales_ij'. The firm-level dataset contains instead the following variables: 'year', 'vat', 'nace', 'turnover'.
+
+### 3.3 Main script
+There is one main code script to rule them all. This main script initializes the project. Here you can set the data that you wish to use ('real' or 'random', if you wish to test the code) and the name of the files containing the data (supported extensions are .dta or .csv). Finally, this script calls the master scripts for each task, which in turn call all the codes within that task. If you are using real data, after specifying the exact name of the file (paired with the file extension), do not forget to add the file in the folder 'task1_network_statistics/input'.
+
+### 3.4 Task 0 - random data
+This task generates random datasets that have the same variable names as in the real data used for this project. The number of firms and links can be changed at will to test and debug codes.
+
+### 3.5 Task 1 - network statistics
+This task analyses the data and generates as output some general network statistics: number of firms, sellers and buyers, links, extensive and intensive margin degree distributions, correlations, etc. The task generates statistics for the whole panel and for each year, creating a specific folder for each of the years of your data.
 
 
 
