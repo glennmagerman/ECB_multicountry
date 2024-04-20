@@ -9,7 +9,7 @@ This GitHub repository is aimed at the collaborators of the project, and contain
 
 Section 2 describes the data setup, governance and project workflow. 
 
-Section 3 describes the code structure to produced the targeted network statistics.
+Section 3 describes the code structure to produce the targeted network statistics.
 
 ## 2. Data
 ### 2.1 Data sources
