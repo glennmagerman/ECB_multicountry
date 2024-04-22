@@ -61,7 +61,7 @@ The entire code pipeline can then be submitted to e.g. a journal for its replica
 Before running the code, please make sure that the following libraries are correctly installed in your system:
 os, sys, shutil, pandas, numpy, scipy, matplotlib, networkx, seaborn, scikit-learn, linearmodels, statsmodels, powerlaw.
 
-### 3.2.2 Structure of the data
+#### 3.2.2 Structure of the data
 The B2B transactions dataset should be a panel containing the following variables: 'year', 'vat_i', 'vat_j', 'sales_ij'. The firm-level dataset contains instead the following variables: 'year', 'vat', 'nace', 'turnover'. It can be either in .dta or in .csv form.
 
 ### 3.3 Main script
