@@ -1,5 +1,5 @@
 # ECB multi-country B2B analysis 
-coordinated by Emmanuel Dhyne, Glenn Magerman, and Alberto Palazzolo
+coordinated by Emmanuel Dhyne, Glenn Magerman, and Alberto Palazzolo.
 
 For any question, feel free to reach out to [Glenn Magerman](glenn.magerman@ulb.be), [Alberto Palazzolo](alberto.palazzolo@nbb.be) or [Emmanuel Dhyne](emmanuel.dhyne@nbb.be).
 
