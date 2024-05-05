@@ -73,7 +73,7 @@ This task generates random datasets that have the same variable names as in the 
 ### 3.5 Task 1 - clean data
 This task loads the data (either real or random), cleans the data checking for irregularities (e.g. bilateral sales higher than total turnover) and creates a single dataframe to be used for the analysis.
 
-### 3.6 Task 1 - network statistics
+### 3.6 Task 2 - network statistics
 This task analyses the data and generates as output some general network statistics: number of firms, sellers and buyers, links, extensive and intensive margin degree distributions, correlations, etc. The task generates statistics for the whole panel and for each year, creating a specific folder for each of the years of your data.
 
 
