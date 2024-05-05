@@ -65,12 +65,15 @@ os, sys, shutil, pandas, numpy, scipy, matplotlib, networkx, seaborn, scikit-lea
 The B2B transactions dataset should be a panel containing the following variables: 'year', 'vat_i', 'vat_j', 'sales_ij'. The firm-level dataset contains instead the following variables: 'year', 'vat', 'nace', 'turnover'. It can be either in .dta or in .csv form.
 
 ### 3.3 Main script
-There is one main code script to rule them all. This main script initializes the project. Here you can set the data that you wish to use ('real' or 'random', if you wish to test the code) and the name of the files containing the data (supported extensions are .dta or .csv). Finally, this script calls the master scripts for each task, which in turn call all the codes within that task. If you are using real data, after specifying the exact name of the file (paired with the file extension), do not forget to add the file in the folder 'task1_network_statistics/input'.
+There is one main code script to rule them all. This main script initializes the project. Here you can set the data that you wish to use ('real' or 'random', if you wish to test the code) and the name of the files containing the data (supported extensions are .dta or .csv). Moreover, you can also set the range of years for which you wish to generate random data. Finally, this script calls the master scripts for each task, which in turn call all the codes within that task. If you are using real data, after specifying the exact name of the file (paired with the file extension), do not forget to add the file in the folder 'task1_network_statistics/input'.
 
 ### 3.4 Task 0 - random data
 This task generates random datasets that have the same variable names as in the real data used for this project. The number of firms and links can be changed at will to test and debug codes.
 
-### 3.5 Task 1 - network statistics
+### 3.5 Task 1 - clean data
+This task loads the data (either real or random), cleans the data checking for irregularities (e.g. bilateral sales higher than total turnover) and creates a single dataframe to be used for the analysis.
+
+### 3.6 Task 1 - network statistics
 This task analyses the data and generates as output some general network statistics: number of firms, sellers and buyers, links, extensive and intensive margin degree distributions, correlations, etc. The task generates statistics for the whole panel and for each year, creating a specific folder for each of the years of your data.
 
 
