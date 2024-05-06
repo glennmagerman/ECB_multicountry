@@ -62,7 +62,7 @@ Before running the code, please make sure that the following libraries are corre
 os, sys, shutil, pandas, numpy, scipy, matplotlib, networkx, seaborn, scikit-learn, linearmodels, statsmodels, powerlaw.
 
 #### 3.2.2 Structure of the data
-The B2B transactions dataset should be a panel containing the following variables: 'year', 'vat_i', 'vat_j', 'sales_ij'. The firm-level dataset contains instead the following variables: 'year', 'vat', 'nace', 'turnover'. It can be either in .dta or in .csv form.
+The B2B transactions dataset should be a panel containing the following variables: 'year', 'vat_i', 'vat_j', 'sales_ij'. The firm-level dataset contains instead the following variables: 'year', 'vat', 'nace', 'turnover', 'inputs_total'. It can be either in .dta or in .csv form.
 
 ### 3.3 Main script
 There is one main code script to rule them all. This main script initializes the project. Here you can set the data that you wish to use ('real' or 'random', if you wish to test the code) and the name of the files containing the data (supported extensions are .dta or .csv). Moreover, you can also set the range of years for which you wish to generate random data. Finally, this script calls the master scripts for each task, which in turn call all the codes within that task. If you are using real data, after specifying the exact name of the file (paired with the file extension), do not forget to add the file in the folder 'task1_network_statistics/input'.
