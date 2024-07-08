@@ -71,6 +71,8 @@ full_df.drop(columns=['sum_sales_ij'], inplace=True)
 full_df['sum_purch_ij'] = full_df.groupby('vat_j')['sales_ij'].transform('sum')
 full_df['inputs_j'] = np.where( pd.isna(full_df['inputs_j']), full_df['sum_purch_ij'], full_df['inputs_j'] ).T
 
+full_df.drop(columns=['sum_purch_ij'], inplace=True)
+
 #%% 5. Save to pickles
 
 data_dict = {'full_df': full_df}
