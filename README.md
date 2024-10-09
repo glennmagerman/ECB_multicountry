@@ -58,14 +58,20 @@ The entire code pipeline can then be submitted to e.g. a journal for its replica
 ### 3.2 Getting started
 
 #### 3.2.1 Required libraries
-Before running the code, please make sure that the following libraries are correctly installed in your system:
-os, sys, shutil, pandas, numpy, scipy, matplotlib, networkx, seaborn, scikit-learn, linearmodels, statsmodels, powerlaw.
+First, copy or download this repository to your local machine by either cloning it via Git or downloading the ZIP file and extracting it. Next, create and activate a new virtual environment on your local machine with Python version 3.12.4. Once the environment is set up, navigate to the project directory and install the required dependencies using the command:
 
-#### 3.2.2 Structure of the data
+`pip install -r requirements.txt`
+
+After the dependencies are installed, you can run the Python script by executing the _master_call.py file in the folder 'tasks'. Make sure the virtual environment is activated to ensure that the installed dependencies are available when running the code.
+
+#### 3.2.2 Configuration file
+The configuration file is a text file located in 'tasks/config'. Here you can set the data that you wish to use ('real' or 'random', if you wish to test the code) and the name of the files containing the data (supported extensions are .dta or .csv). Moreover, you can also set the range of years for which you wish to generate or analyze the data. If you are using real data, after specifying the exact name of the file (paired with the file extension), do not forget to add the file in the folder 'task1_clean_data/input'.
+
+#### 3.2.3 Structure of the data
 The B2B transactions dataset should be a panel containing the following variables: 'year', 'vat_i', 'vat_j', 'sales_ij'. The firm-level dataset contains instead the following variables: 'year', 'vat', 'nace', 'turnover', 'inputs_total'. It can be either in .dta or in .csv form.
 
 ### 3.3 Main script
-There is one main code script to rule them all. This main script initializes the project. Here you can set the data that you wish to use ('real' or 'random', if you wish to test the code) and the name of the files containing the data (supported extensions are .dta or .csv). Moreover, you can also set the range of years for which you wish to generate random data. Finally, this script calls the master scripts for each task, which in turn call all the codes within that task. If you are using real data, after specifying the exact name of the file (paired with the file extension), do not forget to add the file in the folder 'task1_network_statistics/input'.
+There is one main code script to rule them all. This script calls the master scripts for each task, which in turn call all the scripts within that task. 
 
 ### 3.4 Task 0 - random data
 This task generates random datasets that have the same variable names as in the real data used for this project. The number of firms and links can be changed at will to test and debug codes.
