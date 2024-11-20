@@ -25,7 +25,7 @@ def master_task2():
     # 1. Define the absolute paths
     abs_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
     input_path = os.path.abspath(os.path.join(abs_path, 'input'))
-    tmp_path = os.path.abspath(os.path.join(abs_path, 'tmp'))
+    #tmp_path = os.path.abspath(os.path.join(abs_path, 'tmp'))
     output_path = os.path.abspath(os.path.join(abs_path, 'output'))
 
     # 2. Initialize task

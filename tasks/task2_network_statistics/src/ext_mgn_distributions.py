@@ -92,12 +92,14 @@ def degree_plots_by_ind(df_year, G_year, year, degree: str, output_path, demean=
         nace_column = 'nace_i'
         nickname = 'out'
         degree_func = G_year.out_degree
+        industry_index = 'industry_i'
     elif degree == 'indegree':
         degree_type = "suppliers"
         vat_column = 'vat_j'
         nace_column = 'nace_j'
         nickname = 'in'
         degree_func = G_year.in_degree
+        industry_index = 'industry_j'
     else:
         raise ValueError("degree must be either 'outdegree' or 'indegree'")
     
@@ -108,20 +110,20 @@ def degree_plots_by_ind(df_year, G_year, year, degree: str, output_path, demean=
     industries = ['Primary and extraction','Manufacturing', 'Utilities', 'Construction', 
                 'Market services','Non-market services']
     for industry in industries:
-        industry_nodes = df_year[df_year['industry_i'] == industry][f'{vat_column}'].unique()
-        degree = {node: degree for node, degree in degree_func(industry_nodes) if degree > 0}
+        industry_nodes = df_year[df_year[industry_index] == industry][f'{vat_column}'].unique()
+        degree_sec = {node: degree for node, degree in degree_func(industry_nodes) if degree > 0}
 
-        if demean == True:
+        if demean:
             # Filter the data for the current year and sector
-            df_year_sec = df_year[df_year['industry_i'] == industry].copy()
-            df_year_sec[f'{nickname}deg'] = df_year_sec[f'{vat_column}'].map(degree)
+            df_year_sec = df_year[df_year[industry_index] == industry].copy()
+            df_year_sec[f'{nickname}deg'] = df_year_sec[f'{vat_column}'].map(degree_sec)
             df_year_sec[f'ln_{nickname}deg'] = np.log(df_year_sec[f'{nickname}deg'])
         
             # now de-mean variables
             df_year_sec = df_year_sec.groupby(f'{nace_column}').filter(lambda x: len(x) >= 5) # Filter out sectors with less than 5 firms
             log_deg = demean_variable_in_df(f'ln_{nickname}deg', f'{nace_column}', df_year_sec)
         else:
-            log_deg = np.array( np.log(list(degree.values())) )
+            log_deg = np.array( np.log(list(degree_sec.values())) )
 
         grid, kde_densities = find_kernel_densities(log_deg)
         plt.plot(grid, kde_densities, label=f'{industry}')
@@ -132,7 +134,7 @@ def degree_plots_by_ind(df_year, G_year, year, degree: str, output_path, demean=
     plt.xlabel(f'Number of {degree_type}')
     plt.ylabel('Density')
     plt.legend()
-    if demean == True:
+    if demean:
         plt.savefig(os.path.join(output_path,f'{year}', 'kernel_densities', f'{nickname}_degree_demeaned_bysec.png'), dpi=300, bbox_inches='tight')
     else:
         plt.savefig(os.path.join(output_path,f'{year}', 'kernel_densities', f'{nickname}_degree_bysec.png'), dpi=300, bbox_inches='tight')
@@ -174,19 +176,23 @@ def calculate_degree_summary(G_year, df_year, degree: str, industries, output_pa
     """
     if degree == 'outdegree':
         degree_func = G_year.out_degree
+        vat_column = 'vat_i'
         nickname = 'out'
+        industry_index = 'industry_i'
     elif degree == 'indegree':
         degree_func = G_year.in_degree
+        vat_column = 'vat_j'
         nickname = 'in'
+        industry_index = 'industry_j'
     else:
         raise ValueError("degree_type must be either 'outdegree' or 'indegree'")
     
     # Initialize summary list
     sum_bysec = []
     
-    # Calculate degree moments for each industry
+     # Calculate degree moments for each industry
     for industry in industries:
-        industry_nodes = df_year[df_year['industry_i'] == industry]['vat_i'].unique()
+        industry_nodes = df_year[df_year[industry_index] == industry][vat_column].unique()
         degree_sec = {node: degree for node, degree in degree_func(industry_nodes) if degree > 0}
         moments_sec = calculate_distribution_moments(list(degree_sec.values()))
         sum_bysec.append(moments_sec)

@@ -121,7 +121,7 @@ def plots_by_ind(df_year, year, var: str, variable_type: str, output_path, demea
     x_max = -np.inf
     for industry in industries:
         # Filter the data for the current year and sector
-        df_year_sec = df_year[df_year['industry_i'] == industry].copy()
+        df_year_sec = df_year[df_year[f'industry{column_suffix}'] == industry].copy()
         
         if demean:
             df_year_sec[f'ln_{var}{column_suffix}'] = np.log(df_year_sec[f'{var}{column_suffix}'])
@@ -193,17 +193,24 @@ def summary_table_by_year(df_year, year, variable_type: str, output_path):
     # Determine the column name and file name based on the variable_type
     if variable_type == 'sales':
         column = 'turnover_i'
+        vat_column = 'vat_i'
         file_label = 'turnover_bysec.csv'
+        column_suffix = '_i'
     elif variable_type == 'purchases':
         column = 'inputs_j'
+        vat_column = 'vat_j'
         file_label = 'purchases_bysec.csv'
+        column_suffix = '_j'
     else:
         raise ValueError("variable_type must be either 'sales' or 'purchases'.")
+        
+    # Remove duplicate entries for 'vat_i' or 'vat_j', keeping only the first occurrence
+    df_year = df_year.drop_duplicates(subset= vat_column)
 
     sum_bysec = []
     for industry in industries:
         # Filter the data for the current year and sector
-        df_year_sec = df_year[df_year['industry_i'] == industry].copy()
+        df_year_sec = df_year[df_year[f'industry{column_suffix}'] == industry].copy()
 
         # Calculate moments for the industry and append to list
         moments_sec = calculate_distribution_moments(df_year_sec[column] / 1000000)  # Report values in mln euros

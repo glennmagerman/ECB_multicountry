@@ -4,8 +4,6 @@ import os
 
 def upload_data(tmp_path):
     # Load the data
-    #firms_df = pd.read_csv(os.path.join(tmp_path, 'firms_data_cleaned.csv'))
-    #B2B_df = pd.read_csv(os.path.join(tmp_path, 'B2B_data_cleaned.csv'))
     firms_df = pd.read_parquet(os.path.join(tmp_path, 'firms_data_cleaned.parquet'), engine='pyarrow')
     B2B_df = pd.read_parquet(os.path.join(tmp_path, 'B2B_data_cleaned.parquet'), engine='pyarrow')
 
@@ -20,8 +18,8 @@ def merge_data(firms_df, B2B_df):
         on=['vat_i','year'], how='inner' )
 
     # merge network and firm data on vat_j
-    full_df = full_df.merge( firms_df[['year','vat','nace','inputs_total']].rename(
-        columns={'vat': 'vat_j', 'inputs_total':'inputs_j', 'nace': 'nace_j'}), on=['vat_j','year'], how='inner' )
+    full_df = full_df.merge( firms_df[['year','vat','nace','inputs_total', 'industry']].rename(
+        columns={'vat': 'vat_j', 'inputs_total':'inputs_j', 'nace': 'nace_j','industry':'industry_j'}), on=['vat_j','year'], how='inner' )
 
     return full_df
 
@@ -58,7 +56,7 @@ def adjust_inputs(full_df):
 
     # impute total inputs from network purchases
     # it may happen that some firms do not report input use but there are reported purchases in the B2B network
-    full_df['sum_purch_ij'] = full_df.groupby('vat_j')['sales_ij'].transform('sum')
+    full_df['sum_purch_ij'] = full_df.groupby(['vat_j', 'year'])['sales_ij'].transform('sum')
     full_df['inputs_j'] = np.where( pd.isna(full_df['inputs_j']), full_df['sum_purch_ij'], full_df['inputs_j'] ).T
     full_df['inputs_j'] = np.where(full_df['inputs_j']==0, full_df['sum_purch_ij'], full_df['inputs_j'] ).T
     full_df.drop(columns=['sum_purch_ij'], inplace=True)
@@ -68,7 +66,7 @@ def adjust_inputs(full_df):
 def clean_merged_data(full_df):
 
     # calculate total network sales for each i
-    full_df['sum_sales_ij'] = full_df.groupby('vat_i')['sales_ij'].transform('sum')
+    full_df['sum_sales_ij'] = full_df.groupby(['vat_i', 'year'])['sales_ij'].transform('sum')
 
     # 1. impute turnover from network sales
     full_df = adjust_turnover(full_df)

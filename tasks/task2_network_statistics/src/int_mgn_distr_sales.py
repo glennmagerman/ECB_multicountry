@@ -1,6 +1,4 @@
-import pandas as pd
 import numpy as np
-import os 
 from common.utilities import demean_variable_in_df, kernel_density_plot
 from task2_network_statistics.src.utilities_task2 import plot_densities_sales_or_purchases, kernel_densities_bysec, summary_tables
 
