@@ -11,7 +11,7 @@ def extract_nace_4_digits(firms_df):
     # Determine the maximum length of NACE codes
     max_length = firms_df['nace'].str.len().max()
     # add a leading 0 to NACE codes with less than 4 digits (csv file reads them as integers)
-    firms_df['nace'] = firms_df['nace'].apply(lambda x: x.zfill(5))
+    firms_df['nace'] = firms_df['nace'].apply(lambda x: x.zfill(max_length))
 
     #extract NACE 4-digits codes, replace NACE 5 (or more) digits
     firms_df['nace'] = firms_df['nace'].astype(str).str.slice(start=0, stop=4)
