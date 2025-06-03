@@ -5,6 +5,7 @@ For any question, feel free to reach out to [Glenn Magerman](glenn.magerman@ulb.
 
 ## 1. Overview
 The project develops key statistics on firm-to-firm networks across multiple EU countries in the context of the multi-year [Research Network ChaMP](https://www.ecb.europa.eu/pub/economic-research/research-networks/html/champ.en.html) of the European Central Bank.
+
 The goal of this project is to understand the role of production networks in explaining micro- and macro-economic outcomes. This includes empirics of shock propagation like supply (e.g. productivity shocks), demand (e.g. final demand shocks), and monetary policy.
 
 
