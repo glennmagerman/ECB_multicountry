@@ -4,7 +4,11 @@ coordinated by Emmanuel Dhyne, Glenn Magerman, and Alberto Palazzolo.
 For any question, feel free to reach out to [Glenn Magerman](glenn.magerman@ulb.be), [Alberto Palazzolo](alberto.palazzolo@nbb.be) or [Emmanuel Dhyne](emmanuel.dhyne@nbb.be).
 
 ## 1. Overview
-The goal of this project is to develop key statistics on firm-to-firm networks across multiple EU countries in the context of the multi-year [Research Network ChaMP](https://www.ecb.europa.eu/pub/economic-research/research-networks/html/champ.en.html) of the European Central Bank.
+The project develops key statistics on firm-to-firm networks across multiple EU countries in the context of the multi-year [Research Network ChaMP](https://www.ecb.europa.eu/pub/economic-research/research-networks/html/champ.en.html) of the European Central Bank.
+The goal of this project is to understand the role of production networks in explaining micro- and macro-economic outcomes. This includes empirics of shock propagation like supply (e.g. productivity shocks), demand (e.g. final demand shocks), and monetary policy.
+
+
+
 This GitHub repository is aimed at the collaborators of the project, and contains all codes to construct the various statistics for the project, from data pre-cleaning, cleaning, harmonization, to descriptive statistics.
 
 Section 2 describes the data setup, governance and project workflow. 
