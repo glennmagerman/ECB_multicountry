@@ -21,31 +21,36 @@
 #
 # -----------------------------------------------------------------------------
 # Author: Alberto Palazzolo
-# Last Modified: September 2024
+# Last Modified: November 2025
 # -----------------------------------------------------------------------------
 # Settings for Data Generation
 data_generation:
   nfirms: 1000        # Number of firms
   nlinks: 10000      # Number of links between firms
+  start_year: 2002  # DO NOT change this
+  end_year: 2022    # DO NOT change this
+
+# Country
+country: 'BEL' # options are: BEL (Belgium), EST (Estonia), ITA (Italy), PRT (Portugal) and HUN (Hungary)
 
 # Years
 years:
-  start_year: 2018    # The first year to generate or analyze data
-  end_year: 2018      # The last year to generate or analyze data
+  start_year: 2019    # The first year to analyze data
+  end_year: 2019     # The last year to analyze data
 
 # Choose the type of data to use:
 # "real" - Use real data from input files
 # "random" - Generate random data for analysis
-data_type: "random"
+data_type: "real"
 
 # Input Files for Analysis
 # Define the name and the type of each input file
 # 1. B2B Data
 b2b_data:
-  file_name: "B2B_data_pseudonymized"
+  file_name: "B2B_data"
   extension: "dta"    # Specify file type: "csv" or "dta" (if Stata file)
 
 # 2. Firm-Level Data
 firm_data:
-  file_name: "firm_data_final"
+  file_name: "B2B_firm_data_nounits"
   extension: "dta"  # Specify file type: "csv" or "dta" (if Stata file)

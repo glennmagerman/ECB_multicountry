@@ -7,6 +7,7 @@ from linearmodels import PanelOLS
 from sklearn.neighbors import KernelDensity
 import shutil
 import yaml
+import pyfixest as pf
 
 ################################
 # Functions for task maintenance
@@ -54,6 +55,41 @@ def copy_output_from_previous_task(abs_path, previous_task_name):
         src_path = os.path.join(dir1, filename)  # Source file path
         dest_path = os.path.join(target_dir, filename)  # Destination file path
         shutil.copy2(src_path, dest_path)  # Copy and replace file
+        
+def copy_output_from_task(abs_path, previous_task_name, file_list=None):
+    """
+    Copies files or directories from the previous task's folder to the current task's input directory.
+    Parameters:
+    abs_path (str): The absolute path of the current task.
+    previous_task_name (str): The name of the previous task whose content is to be copied.
+    file_list (list or None): A list of filenames or directory names to copy.
+    If None, all items in the previous task's folder will be copied.
+    """
+    # Define the source directory: ../<previous_task_name>
+    source_dir = os.path.abspath(os.path.join(abs_path, '..', previous_task_name))
+    # Define the target directory: <current_task>/input
+    target_dir = os.path.join(abs_path, 'input')
+    # Create target directory if it doesn't exist
+    if not os.path.exists(target_dir):
+        os.makedirs(target_dir)
+    # If file_list is None, copy all items in the source directory
+    if file_list is None:
+        file_list = os.listdir(source_dir)
+    # Iterate over each item in file_list and copy appropriately
+    for item in file_list:
+        src_path = os.path.join(source_dir, item)
+        dest_path = os.path.join(target_dir, item)
+        if os.path.isdir(src_path):
+            # Copy entire folder; 'dirs_exist_ok=True' allows merging if destination exists (Python 3.8+)
+            shutil.copytree(src_path, dest_path, dirs_exist_ok=True)
+            print(f"Copied directory '{item}' to '{target_dir}'")
+        elif os.path.isfile(src_path):
+            # Copy a single file, preserving metadata
+            shutil.copy2(src_path, dest_path)
+            print(f"Copied file '{item}' to '{target_dir}'")
+        else:
+            print(f"Warning: '{item}' does not exist in '{source_dir}'")
+
 
 # Create folders for storing output for each year
 def create_folders_for_years(abs_path, output_path):
@@ -81,6 +117,12 @@ def create_folders_for_years(abs_path, output_path):
         # create folder for CCDFs
         if not os.path.exists( os.path.join(output_path, f'{year}', 'CCDF') ):
             os.makedirs( os.path.join(output_path, f'{year}', 'CCDF') )
+            
+        if not os.path.exists( os.path.join(output_path, f'{year}', 'var_decomp') ):
+            os.makedirs( os.path.join(output_path, f'{year}', 'var_decomp') )
+            
+        if not os.path.exists( os.path.join(output_path, f'{year}', 'coefficients_of_variation') ):
+            os.makedirs( os.path.join(output_path, f'{year}', 'coefficients_of_variation') )
 
 ################################
 # Functions for loading data
@@ -133,7 +175,8 @@ def macros_from_config(abs_path):
         config = yaml.safe_load(file)
 
     # extract configuration parameters
-    start, end = extract_start_end_years(abs_path)
+    start = config['data_generation']['start_year']
+    end = config['data_generation']['end_year'] 
     nfirms = config['data_generation']['nfirms']
     nlinks = config['data_generation']['nlinks']
 
@@ -196,20 +239,36 @@ def set_ticks_log_scale(x_value, step=1, axis='x'):
         return plt.yticks(xticks_new*2.3, [f'$10^{{{int(x)}}}$' for x in xticks_new])
     
     
-def demean_variable_in_df(var_name, FE_name, df):
+def demean_variable_in_df_old(var_name, FE_name, df):
     
+    if 'year' in df.columns:
+        time_col = 'year'
+        df_out = df.set_index([FE_name, time_col]).sort_index()
+    else: 
+        time_col = 'time_dummy'
+        df_out = df.copy()
+        df_out[time_col] = 0
+        df_out = df_out.set_index([FE_name, time_col]).sort_index()
+        
     # regress the variable on its NACE-4digits code fixed effect
-    df = df.set_index([FE_name, 'year'])
-    mod = PanelOLS.from_formula(f'{var_name} ~ 1 + EntityEffects', df)
+    mod = PanelOLS.from_formula(f'{var_name} ~ 1 + EntityEffects', df_out)
     res = mod.fit()
     var_demeaned = np.array(res.resids)
     
     return var_demeaned
 
+def demean_variable_in_df(var_name, FE_name, df):
+    
+    mod = pf.feols(f'{var_name} ~ 1 | {FE_name}', df)
+    var_demeaned = mod.resid()
+    
+    return var_demeaned
+
 def aggregate_and_bin(df_year, x, y):
 
-    df_year[f'{x}_bin'] = pd.qcut(df_year[x], q=20, duplicates='drop')
-    binned_data = df_year.groupby(f'{x}_bin', observed=True).agg({
+    df = df_year.copy()
+    df[f'{x}_bin'] = pd.qcut(df[x], q=20, duplicates='drop')
+    binned_data = df.groupby(f'{x}_bin', observed=True).agg({
         y: 'mean',
         x: 'mean'
     }).reset_index()
@@ -237,3 +296,26 @@ def kernel_density_plot(array, xlabel: str, ylabel: str, name_plot: str, output_
     plt.ylabel(ylabel)
     plt.savefig( os.path.join(output_path, f'{year}', 'kernel_densities', name_plot), dpi=300, bbox_inches='tight' )
     plt.close()
+
+def format_sci(x, precision=3):
+    """
+    Format any number into human-readable scientific notation:
+    - If |x| >= 0.001 and |x| < 1000  → show normally
+    - Otherwise → show as a × 10^b with LaTeX formatting
+    
+    Example: 4.65e-06 → "4.65 × 10$^{-6}$"
+    """
+    if x == 0:
+        return "0"
+
+    s = f"{x:.{precision}e}"  # always scientific, like 4.65e-06
+    mantissa, exp_str = s.split("e")
+    exponent = int(exp_str)
+
+    # If exponent small, show normally
+    if -3 < exponent < 3:
+        return f"{x:.{precision}f}".rstrip("0").rstrip(".")
+
+    mantissa = float(mantissa)
+
+    return rf"{mantissa:.{precision}f} × 10$^{{{exponent}}}$"

@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-import yaml
 import os 
 from common.utilities import macros_from_config
 

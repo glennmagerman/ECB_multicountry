@@ -11,7 +11,6 @@ import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..','..')))
 from task0_random_data.src.create_random_B2B import create_random_B2B
 from task0_random_data.src.random_firm_data import create_random_firm_data
-from task0_random_data.src.quarterly_firm_data import create_quarterly_firm_data
 from common.utilities import initialize_task, maintenance
 import numpy as np
 
@@ -19,7 +18,7 @@ def master_task0():
 
     # 1. Define the absolute paths
     abs_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-    input_path = os.path.abspath(os.path.join(abs_path, 'input'))
+    #input_path = os.path.abspath(os.path.join(abs_path, 'input'))
     tmp_path = os.path.abspath(os.path.join(abs_path, 'tmp'))
     output_path = os.path.abspath(os.path.join(abs_path, 'output'))
 
@@ -34,9 +33,6 @@ def master_task0():
 
     # 2b. Generate random (annual) firm-level data
     create_random_firm_data(abs_path, tmp_path, output_path)
-
-    # 2c. Generate random *quarterly* firm-level data (for monetary policy analysis)
-    create_quarterly_firm_data(abs_path, tmp_path, output_path)
 
     # 3. Maintenance
     maintenance(abs_path)
