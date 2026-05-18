@@ -887,35 +887,127 @@ def contrib_shares_bybins_horizon_mean_of_ratios(
     Decompose the aggregate monetary policy response into contributions
     from percentile bins of the upstreamness distribution.
 
-    Bins are assigned using percentile ranks rather than raw quantile cutoffs,
-    which avoids empty bins when quantile cutoffs coincide.
+    Shares are computed as:
+
+        share_{bin, year, h}
+            = contribution_{bin, year, h} / aggregate_effect_{year, h}
+
+    and then averaged across years.
+
+    Bins are assigned at the firm-year level before merging into panel_h,
+    so firm-year observations are not ranked repeatedly across horizons.
+
+    Ties in upstreamness are broken deterministically using firm_col.
+    Therefore bins contain approximately the intended percentile mass.
     """
 
     tot_col = f"tot_eff_{var}"
+
     if tot_col not in panel_h.columns:
         raise KeyError(f"panel_h must contain column '{tot_col}'")
 
-    # sales shares by year
-    dfw = panel_df[[firm_col, year_col, turnover_col, upstream_col]].copy()
-    dfw = dfw.sort_values([firm_col, year_col])
-    dfw["total_turnover_year"] = dfw.groupby(year_col)[turnover_col].transform("sum")
-    dfw["sales_share"] = dfw[turnover_col] / dfw["total_turnover_year"]
+    required_panel_df = [firm_col, year_col, turnover_col, upstream_col]
+    missing_panel_df = [c for c in required_panel_df if c not in panel_df.columns]
+    if missing_panel_df:
+        raise KeyError(f"panel_df is missing columns: {missing_panel_df}")
 
-    # merge weights and upstreamness into panel_h
-    ph = panel_h.merge(
-        dfw[[firm_col, year_col, "sales_share", upstream_col]],
+    required_panel_h = [firm_col, year_col, h_col, tot_col]
+    missing_panel_h = [c for c in required_panel_h if c not in panel_h.columns]
+    if missing_panel_h:
+        raise KeyError(f"panel_h is missing columns: {missing_panel_h}")
+
+    # ------------------------------------------------------------
+    # 1. Firm-year sales shares
+    # ------------------------------------------------------------
+
+    dfw = panel_df[[firm_col, year_col, turnover_col, upstream_col]].copy()
+
+    dfw = dfw.dropna(
+        subset=[firm_col, year_col, turnover_col, upstream_col]
+    )
+
+    dfw["total_turnover_year"] = (
+        dfw.groupby(year_col)[turnover_col]
+           .transform("sum")
+    )
+
+    dfw = dfw[dfw["total_turnover_year"] != 0].copy()
+
+    dfw["sales_share"] = (
+        dfw[turnover_col] / dfw["total_turnover_year"]
+    )
+
+    # ------------------------------------------------------------
+    # 2. Percentile-bin assignment at firm-year level
+    # ------------------------------------------------------------
+
+    bin_edges_sorted = sorted(bin_edges)
+
+    if bin_edges_sorted[0] != 0 or bin_edges_sorted[-1] != 1:
+        raise ValueError("bin_edges should start at 0 and end at 1")
+
+    if any((x < 0 or x > 1) for x in bin_edges_sorted):
+        raise ValueError("bin_edges must lie between 0 and 1")
+
+    if len(set(bin_edges_sorted)) != len(bin_edges_sorted):
+        raise ValueError("bin_edges contains duplicate values")
+
+    bin_labels = [
+        f"p{int(bin_edges_sorted[i] * 100)}_p{int(bin_edges_sorted[i + 1] * 100)}"
+        for i in range(len(bin_edges_sorted) - 1)
+    ]
+
+    if cutoff_mode == "yearly":
+        dfw = dfw.sort_values([year_col, upstream_col, firm_col]).copy()
+
+        dfw["_rank_num"] = dfw.groupby(year_col).cumcount() + 1
+        dfw["_rank_den"] = dfw.groupby(year_col)[firm_col].transform("count")
+        dfw["_pct_rank"] = dfw["_rank_num"] / dfw["_rank_den"]
+
+    elif cutoff_mode == "global":
+        dfw = dfw.sort_values([upstream_col, year_col, firm_col]).copy()
+        dfw["_pct_rank"] = (np.arange(len(dfw)) + 1) / len(dfw)
+
+    else:
+        raise ValueError("cutoff_mode must be 'yearly' or 'global'")
+
+    dfw["bin"] = pd.cut(
+        dfw["_pct_rank"],
+        bins=bin_edges_sorted,
+        labels=bin_labels,
+        include_lowest=True,
+        right=True,
+    )
+
+    # ------------------------------------------------------------
+    # 3. Merge bins and weights into horizon panel
+    # ------------------------------------------------------------
+
+    ph_base = panel_h.drop(
+        columns=[
+            c for c in ["sales_share", "_pct_rank", "bin"]
+            if c in panel_h.columns
+        ],
+        errors="ignore",
+    )
+
+    ph = ph_base.merge(
+        dfw[[firm_col, year_col, "sales_share", "_pct_rank", "bin"]],
         on=[firm_col, year_col],
         how="left",
         validate="m:1",
-        suffixes=("", "_df"),
     ).copy()
 
-    ph = ph.dropna(subset=[year_col, h_col, "sales_share", tot_col, upstream_col])
+    ph = ph.dropna(
+        subset=[year_col, h_col, "sales_share", tot_col, "_pct_rank", "bin"]
+    )
 
-    # precompute weighted effect
     ph["_weighted_eff"] = ph["sales_share"] * ph[tot_col]
 
-    # total aggregate effect by (year, h)
+    # ------------------------------------------------------------
+    # 4. Aggregate effect by year and horizon
+    # ------------------------------------------------------------
+
     agg_year = (
         ph.groupby([year_col, h_col])["_weighted_eff"]
           .sum()
@@ -923,87 +1015,123 @@ def contrib_shares_bybins_horizon_mean_of_ratios(
           .rename(columns={"_weighted_eff": "agg_eff"})
     )
 
-    bin_edges_sorted = sorted(bin_edges)
-    bin_labels = [
-        f"p{int(bin_edges_sorted[i]*100)}_p{int(bin_edges_sorted[i+1]*100)}"
-        for i in range(len(bin_edges_sorted) - 1)
-    ]
+    # ------------------------------------------------------------
+    # 5. Bin contribution by year, horizon, bin
+    # ------------------------------------------------------------
 
-    # assign percentile-rank bins
-    if cutoff_mode == "yearly":
-        # rank within each year
-        ph["_pct_rank"] = (
-            ph.groupby(year_col)[upstream_col]
-              .rank(method="average", pct=True)
+    contrib = (
+        ph.groupby([year_col, h_col, "bin"], observed=False)["_weighted_eff"]
+          .sum()
+          .reset_index()
+          .rename(columns={"_weighted_eff": "contrib"})
+    )
+
+    # Full grid: empty bins are zero contributions, not missing shares.
+    year_h = ph[[year_col, h_col]].drop_duplicates()
+
+    full_grid = (
+        year_h.assign(_key=1)
+              .merge(
+                  pd.DataFrame({"bin": bin_labels, "_key": 1}),
+                  on="_key",
+                  how="outer",
+              )
+              .drop(columns="_key")
+    )
+
+    contrib = (
+        full_grid.merge(
+            contrib,
+            on=[year_col, h_col, "bin"],
+            how="left",
         )
-    elif cutoff_mode == "global":
-        ph["_pct_rank"] = ph[upstream_col].rank(method="average", pct=True)
-    else:
-        raise ValueError("cutoff_mode must be 'yearly' or 'global'")
+        .fillna({"contrib": 0.0})
+    )
 
-    # force exact 0 into first bin if needed
-    ph["_pct_rank"] = ph["_pct_rank"].clip(lower=1e-12, upper=1.0)
+    share_long = contrib.merge(
+        agg_year,
+        on=[year_col, h_col],
+        how="left",
+    )
 
-    all_long = []
+    if drop_zero_denominator:
+        share_long = share_long.dropna(subset=["agg_eff"])
+        share_long = share_long[share_long["agg_eff"] != 0].copy()
 
-    for i in range(len(bin_edges_sorted) - 1):
-        q_lo = bin_edges_sorted[i]
-        q_hi = bin_edges_sorted[i + 1]
-        bin_label = f"p{int(q_lo*100)}_p{int(q_hi*100)}"
+    share_long["share"] = share_long["contrib"] / share_long["agg_eff"]
 
-        if i < len(bin_edges_sorted) - 2:
-            mask = (ph["_pct_rank"] > q_lo) & (ph["_pct_rank"] <= q_hi)
-        else:
-            mask = (ph["_pct_rank"] > q_lo) & (ph["_pct_rank"] <= q_hi)
+    # ------------------------------------------------------------
+    # 6. Average shares across years
+    # ------------------------------------------------------------
 
-        ph_bin = ph.loc[mask].copy()
-
-        contrib_bin = (
-            ph_bin.groupby([year_col, h_col])["_weighted_eff"]
-                  .sum()
-                  .reset_index()
-                  .rename(columns={"_weighted_eff": "contrib"})
-        )
-
-        tmp = contrib_bin.merge(agg_year, on=[year_col, h_col], how="left")
-
-        if drop_zero_denominator:
-            tmp = tmp.dropna(subset=["agg_eff"])
-            tmp = tmp[tmp["agg_eff"] != 0]
-
-        tmp["share"] = tmp["contrib"] / tmp["agg_eff"]
-        tmp["bin"] = bin_label
-        all_long.append(tmp[[year_col, h_col, "bin", "share"]])
-
-    share_long = pd.concat(all_long, ignore_index=True)
-
-    # average across years
     share_overall = (
-        share_long.groupby([h_col, "bin"])["share"]
+        share_long.groupby([h_col, "bin"], observed=False)["share"]
                   .mean()
                   .reset_index()
                   .rename(columns={"share": "share_mean_years"})
     )
 
     share_wide = (
-        share_overall.pivot(index=h_col, columns="bin", values="share_mean_years")
-                     .sort_index()
+        share_overall.pivot(
+            index=h_col,
+            columns="bin",
+            values="share_mean_years",
+        )
+        .reindex(columns=bin_labels)
+        .sort_index()
     )
 
-    # ensure all bins appear as columns, even if empty
-    for b in bin_labels:
-        if b not in share_wide.columns:
-            share_wide[b] = np.nan
+    # ------------------------------------------------------------
+    # 7. Diagnostics
+    # ------------------------------------------------------------
 
-    share_wide = share_wide[bin_labels]
+    bin_counts = (
+        dfw.groupby([year_col, "bin"], observed=False)[firm_col]
+           .count()
+           .reset_index()
+           .rename(columns={firm_col: "n_firms_bin"})
+    )
+
+    bin_counts_wide = (
+        bin_counts.pivot(
+            index=year_col,
+            columns="bin",
+            values="n_firms_bin",
+        )
+        .reindex(columns=bin_labels)
+        .fillna(0)
+        .astype(int)
+    )
+
+    diagnostics_base = (
+        dfw.groupby(year_col)
+           .agg(
+               n_firms=(firm_col, "count"),
+               min_pct=("_pct_rank", "min"),
+               max_pct=("_pct_rank", "max"),
+               n_unique_upstream=(upstream_col, "nunique"),
+           )
+    )
+
+    diagnostics = diagnostics_base.join(bin_counts_wide)
+
+    # ------------------------------------------------------------
+    # 8. Save outputs
+    # ------------------------------------------------------------
 
     if save:
         out_dir = os.path.join(output_path, "all_years", "monpol")
         os.makedirs(out_dir, exist_ok=True)
-        csv_path = os.path.join(out_dir, f"share_bybins_{var}_{country}.csv")
-        share_wide.to_csv(csv_path)
 
-    return share_wide, share_long
+        share_wide.to_csv(
+            os.path.join(out_dir, f"share_bybins_{var}_{country}.csv")
+        )
+
+        diagnostics.to_csv(
+            os.path.join(out_dir, f"share_bybins_diagnostics_{var}_{country}.csv")
+        )
+
+    return share_wide, share_long, diagnostics
 
 def master_monpol(panel_df, input_path, output_path, country):
     
@@ -1056,13 +1184,13 @@ def master_monpol(panel_df, input_path, output_path, country):
         panel_h["up_class"] = np.ceil(panel_h["avg_upstreamness"]).astype(int)
         panel_h.loc[panel_h["up_class"] > 5, "up_class"] = 5
         
-        share_wide_pct, share_long_pct = contrib_shares_bybins_horizon_mean_of_ratios(
+        share_wide_pct, share_long_pct, diagnostics = contrib_shares_bybins_horizon_mean_of_ratios(
             panel_df, 
             panel_h, 
             var , 
             output_path, 
             country, 
-            bin_edges=(0,0.01,0.05,0.25,0.5,0.75,0.95,0.99,1))
+            bin_edges=(0,0.01,0.05,0.1,0.25,0.5,0.75,0.9,0.95,0.99,1))
         
         #plot_irfs(panel_h, output_path, fig_name, var=var)
         
@@ -1073,36 +1201,6 @@ def master_monpol(panel_df, input_path, output_path, country):
             output_path=output_path,
             country=country,
         )
-        
-        #plot_share_dots_by_class(
-        #    share_wide=share_wide,
-        #    output_path=os.path.join(output_path, "all_years", "monpol"),
-        #    filename=f"share_byclass_{var}_{country}.png",
-        #    xlabel="Quarter",
-        #    ylabel="Contribution to total effect (%)",
-        #    xtick_step=1,
-        #    share_in_percent=True
-        #)
-        
-        #share_wide_pct, share_long_pct = contrib_shares_bypercentile_horizon_mean_of_ratios(
-        #    panel_df=panel_df,
-        #    panel_h=panel_h,
-        #    var=var,
-        #    output_path=output_path,
-        #    country=country,
-        #)
-
-        #plot_share_dots_by_class(
-        #    share_wide=share_wide_pct,
-        #    output_path=os.path.join(output_path, "all_years", "monpol"),
-        #    filename=f"share_bypercentile_{var}_{country}.png",
-        #    xlabel="Quarter",
-        #    ylabel="Contribution to total effect (%)",
-        #    xtick_step=1,
-        #    share_in_percent=True
-        #)
-        #avg_contribution_byclass(panel_df, panel_h, var, output_path, country)
-        #avg_contribution_by_percentiles(panel_df, panel_h, var, output_path, country)
         
         
         
