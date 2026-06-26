@@ -30,14 +30,20 @@ def define_graph(df_year, weighted=True):
     return G
 
 
-def create_leontief_mat(G):
+def create_leontief_mat(G, node_order=None):
 
-    # create matrix as a sparse matrix
-    I_A = nx.to_scipy_sparse_array(G, dtype=np.float64, format='csc')
+    if node_order is None:
+        node_order = list(G.nodes())
+
+    I_A = nx.to_scipy_sparse_array(
+        G,
+        nodelist=node_order,
+        dtype=np.float64,
+        format='csc'
+    )
 
     I_A = sps.lil_matrix(I_A)
-    for firm in range(0, len(G)):
-        I_A[firm, firm] = 1
+    I_A.setdiag(1.0)
     I_A = sps.csc_matrix(I_A)
 
     return I_A
@@ -341,8 +347,9 @@ def centrality(input_base_path, start, end, metric_path, alpha_const=False, wind
             df_year['coef'] = calculate_technical_coeffs(df_year, 'turnover_j')
 
         G = define_graph(df_year)
-
-        I_A = create_leontief_mat(G)
+        
+        node_order = sorted(G.nodes())
+        I_A = create_leontief_mat(G, node_order)
 
         # build per-firm stats
         df_i = (
