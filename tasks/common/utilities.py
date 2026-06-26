@@ -293,7 +293,7 @@ def demean_variable_in_df_old(var_name, FE_name, df):
 
 def demean_variable_in_df(var_name, FE_name, df):
     
-    mod = pf.feols(f'{var_name} ~ 1 | {FE_name}', df)
+    mod = pf.feols(f'{var_name} ~ 1 | {FE_name}', df, fixef_rm='none')
     var_demeaned = mod.resid()
     
     return var_demeaned
