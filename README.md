@@ -81,6 +81,9 @@ The code is organised as modular tasks. Each task has an input, a function and a
 
 `tasks/common/` holds the configuration loader and shared utilities. `tasks/raw_data/` holds, next to your input tables, the Belgian impulse response estimates and World Bank GDP data used by the monetary policy counterfactual (see [`tasks/raw_data/README.md`](tasks/raw_data/README.md)).
 
+## Related pipeline. 
+A separate BIS project builds on the same distributed-data principles to produce harmonised cross-country statistics and policy indicators from confidential administrative data. That pipeline is maintained separately because its objectives, inputs and outputs differ from this ChaMP project. A link to that repo will follow soon.
+
 ## Join the network
 
 Every additional country makes the benchmark more useful. If your institution holds firm-to-firm transaction data (VAT listings, e-invoicing, payment data) and firm level accounts, the sequence is: a zero commitment pilot on the synthetic data (task 0), a call with the coordinating team, then a full run on your data. What you get: a cross country benchmark for your economy and the possibility to participate in extensions of the project and follow-up research. Contact Glenn Magerman.
@@ -91,7 +94,7 @@ The project is a distributed micro data project. Each partner runs the code on i
 
 ## Authors and institutions
 
-Paper authors: Glenn Magerman (ECARES, ULB, CEPR, CESifo), Alberto Palazzolo (ECARES, ULB and National Bank of Belgium), Emmanuel Dhyne (National Bank of Belgium), András Borsos (Magyar Nemzeti Bank), Dmitry Kulikov (Eesti Pank), Andrea Linarello (Banca d'Italia), Alari Paulus (Eesti Pank), Giacomo Romanini (Banca d'Italia), Martín Saldías (Banco de Portugal).
+Paper authors: Glenn Magerman (ECARES, ULB, CEPR, CESifo), Alberto Palazzolo (National Bank of Belgium), Emmanuel Dhyne (National Bank of Belgium), András Borsos (Magyar Nemzeti Bank), Dmitry Kulikov (Eesti Pank), Andrea Linarello (Banca d'Italia), Alari Paulus (Eesti Pank), Giacomo Romanini (Banca d'Italia), Martín Saldías (Banco de Portugal).
 
 The code was written by Alberto Palazzolo. The project started within the ECB's ChaMP research network.
 
