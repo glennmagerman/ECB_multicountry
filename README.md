@@ -1,92 +1,100 @@
-# ECB multi-country B2B analysis 
-coordinated by Emmanuel Dhyne, Glenn Magerman, and Alberto Palazzolo.
+# Firm-to-firm production networks across five EU countries
 
-For any question, feel free to reach out to [Glenn Magerman](glenn.magerman@ulb.be), [Alberto Palazzolo](alberto.palazzolo@nbb.be) or [Emmanuel Dhyne](emmanuel.dhyne@nbb.be).
+Harmonised firm-to-firm production networks for Belgium, Estonia, Hungary, Italy and Portugal, built from administrative VAT and e-invoicing records within the ECB's [Challenges for Monetary Policy Transmission in a Changing World (ChaMP)](https://www.ecb.europa.eu/pub/economic-research/research-networks/html/champ.en.html) research network.
 
-## 1. Overview
-The project develops key statistics on firm-to-firm networks across multiple EU countries in the context of the multi-year [Research Network ChaMP](https://www.ecb.europa.eu/pub/economic-research/research-networks/html/champ.en.html) of the European Central Bank.
+Coordinated by [Glenn Magerman](mailto:glenn.magerman@ulb.be) (ECARES, ULB), [Alberto Palazzolo](mailto:alberto.palazzolo@nbb.be) (ECARES and NBB) and [Emmanuel Dhyne](mailto:emmanuel.dhyne@nbb.be) (NBB).
 
-The goal of this project is to understand the role of production networks in explaining micro- and macro-economic outcomes. This includes empirics of shock propagation like supply (e.g. productivity shocks), demand (e.g. final demand shocks), and monetary policy.
+This repository holds three things:
 
+1. **The pipeline.** One Python code base that every partner runs on its own confidential micro data, on its own premises. Only aggregate statistics leave the building. The same code produces the same statistics in every country, which is what makes the results comparable.
+2. **The key moments.** A compact table of harmonised network statistics for the five countries, taken from the paper's tables, for use as calibration targets in quantitative models of production networks. See [`moments/`](moments/).
+3. **A way in for other countries.** If you have firm-to-firm transaction data, you can run the pipeline on it and compare your economy to the five. See [Run it on your data](#run-it-on-your-data).
 
+## The paper
 
-This GitHub repository is aimed at the collaborators of the project, and contains all codes to construct the various statistics for the project, from data pre-cleaning, cleaning, harmonization, to descriptive statistics.
+Magerman, G., A. Palazzolo, E. Dhyne, A. Borsos, D. Kulikov, A. Linarello, A. Paulus, G. Romanini and M. Saldias (2026), "Beyond firm size: network position and shock transmission in firm-to-firm production networks across five economies". Working paper, September 2026.
 
-Section 2 describes the data setup, governance and project workflow. 
+The paper covers around 3 million firms and more than 100 million supplier-customer relationships in 2019. Five facts stand out:
 
-Section 3 describes the code structure to produce the targeted network statistics.
+- Production networks are extremely concentrated. The top 10% of firms account for 80 to 90% of network sales, and the top 1% of supplier-customer relationships for 50 to 80% of the value traded.
+- Firm-to-firm networks are not a finer version of sector input-output tables. Sector tables are nearly complete (80 to 95% of possible sector pairs trade), while firm networks have densities in the order of 1 in 10,000, and within a single supplier-customer sector pair firm level input shares spread two to four times their sector average.
+- Firm size is a network outcome: within narrow industries, about half of the variance in firm size relates to the number of customers a firm serves.
+- A firm's position along the production chain (upstreamness, downstreamness) is orthogonal to its size and centrality, and cannot be recovered from sector tables.
+- Production networks create an indirect channel of monetary policy transmission. A tightening affects firms directly, but also propagates backward through their customers: further upstream, this indirect demand channel dominates the response. Differences in production structure therefore generate different aggregate responses to the same ECB shock.
 
-## 2. Data
-### 2.1 Data sources
-For each participating country, firm-to-firm data, firm-level datasets (annual accounts, firm trade, location/sector/age etc.).
+![Top 1% of supplier-customer relationships account for up to 80% of network value](figures/concentration_relationships.png)
 
-### 2.2	Data governance
-**Data security protocols:** The project is a distributed micro-data project. This guarantees that security protocols are satisfied at the partner level, and that no confidential data is shared outside the partner’s premises. All data protection regulations that are in place should be documented by participating country.
+## Key moments
 
-**Reporting:** No individual data, nor data points that can be reverse engineered to recover individual firms or transactions will be reported. Reporting of distributions is such that at least 5 observations are within each cell (e.g. sector-year observations). Results will be uploaded to a central, secure platform.
+The table below is an extract of [`moments/key_moments.csv`](moments/key_moments.csv), which holds 43 harmonised statistics per country with the paper table each comes from. All statistics are aggregate, satisfy each institution's confidentiality protocol (at least 5 observations per reported cell), and are directly comparable across countries. Base year 2019.
 
-### 2.3 Coding standards
-**Language:** Coding will be in Python. NCBs which are using Stata 16 or newer will be able to run the python code within their Stata environment.
+| Moment | BE | EE | HU | IT | PT | Source |
+|---|---:|---:|---:|---:|---:|---|
+| Firms | 544,104 | 103,592 | 315,259 | 1,668,485 | 459,548 | Table 1 |
+| Relationships | 13.1m | 0.84m | 2.1m | 59.4m | 38.7m | Table 1 |
+| Density, firm level | 4.4e-5 | 7.8e-5 | 2.1e-5 | 2.1e-5 | 1.8e-4 | Table 6 |
+| Density, NACE 2-digit | 0.95 | 0.80 | 0.78 | 0.91 | 0.93 | Table 6 |
+| Top 10% of firms, share of network sales | 0.89 | 0.81 | 0.86 | 0.87 | 0.87 | Table 2 |
+| Top 1% of relationships, share of network sales | 0.72 | 0.50 | 0.61 | 0.72 | 0.79 | Table 2 |
+| Customers per firm, p50 / p99 | 2 / 343 | 1 / 110 | 2 / 85 | 1 / 459 | 6 / 1,074 | Table B.2 |
+| Tail exponent, number of customers | 1.39 | 1.47 | 1.62 | 1.46 | 1.37 | Table B.1 |
+| Corr(ln sales, ln upstreamness), within NACE 2 | 0.01 | -0.10 | -0.04 | 0.06 | -0.03 | Table 3 |
+| Size variance share of number of customers | 0.46 | 0.45 | 0.42 | 0.51 | 0.49 | Table 4 |
+| Median CV of input shares within NACE 2 sector pairs | 3.0 | 1.9 | 2.0 | 3.6 | 3.6 | Table 7 |
 
-**Workflow:** NBB collaborators will write the codes, and send these to the individual partners to be run on their datasets. Output, consistent with data security protocols, will be reported back to the NBB. 
+`figures/make_figures.py` renders the figures in this README from the CSV, so they stay in sync with the table.
 
-**Code templates:** Each country will receive the same code to be run on their own data. Coding etiquette is standardized, and includes codes for data cleaning, analysis, and reporting scripts. 
+## How to cite
 
-**Data harmonization:** Collaboration rules to be implemented (e.g. naming variables, files, etc.)
+If you use the code or the moments, please cite the paper (reference above). A [`CITATION.cff`](CITATION.cff) file is included, so GitHub's "Cite this repository" button gives you BibTeX and APA.
 
-**Version control:** We use GitHub for version control of codes. 
+## Run it on your data
 
-**Documentation:** We will provide thorough documentation and guidelines for the local officials to execute their code, interpret results, and troubleshoot common issues.
+The pipeline runs on any dataset with two tables. Nothing needs to leave your premises: the code runs locally and writes aggregate statistics to `tasks/task3_network_statistics/output/`.
 
-**Technology infrastructure:** A description of the computing environment is required to ensure local partners have the necessary computing resources to run the analyses. 
+**Input tables** (CSV or Stata `.dta`, placed in `tasks/raw_data/`):
 
-### 2.4. Training and support
-We will set up dedicated training sessions for the local officials to familiarize them with the research design, code, and reporting formats. The NBB team will be available for assistance with technical issues, queries, and clarifications.
+| Table | Variables | One row per |
+|---|---|---|
+| Firm-to-firm transactions | `year`, `vat_i` (seller), `vat_j` (buyer), `sales_ij` | seller, buyer, year |
+| Firm level data | `year`, `vat`, `nace`, `turnover`, `inputs_total` | firm, year |
 
-### 2.5.	Pilot testing
-We will run pilot tests with small samples to identify potential issues in the codes. At this stage of the process, suggestions and improvements from the pilot phase will be included.
+**Steps**
 
-### 2.6.	Full data analysis
-The project is rolled out for all partners across all data.
+1. Clone the repository and create a virtual environment with Python 3.12: `pip install -r tasks/requirements.txt`.
+2. Edit `tasks/config/config.yaml`: set `country`, the years, `data_type: "real"`, and the file names and extensions of your two tables.
+3. Run `python tasks/_master_call.py`. Each task erases its previous output and rebuilds it, so a run is always consistent with the current code.
+4. To test the code without data, set `data_type: "random"`. Task 0 then generates a synthetic network with the right variable names.
 
-### 2.7	Reporting
-After collecting and synthesizing the results, the NBB partners will present initial results for reporting, to be discussed with the partners. Upon agreement, results are written into an article, that can be checked against data and reporting protocols of each partner, for publication as ECB WP.
+The output statistics are the ones in `moments/key_moments.csv`, so your country can be placed next to the five in the paper directly.
 
-## 3. Code structure
+## Pipeline structure
 
-### 3.1 General overview
-The project is constructed as modular tasks. Each task has an input (data or previous results), a function (the code), and an output (the result of the code).
-The output of one task can be the input for another task. The entirety of the code structure is a topological sort, with a downstream flow. An output of a task cannot be used as the input of a previous task. Tasks are short, clear and well-defined. Each task also contains a master file, that (i) initializes the task ("erase previous results"), (ii) runs the codes, (iii) creates output. This ensures that there are no previous results that are inconsistent with the current state of the code, which might otherwise percolate throughout the project.
-This structure ensures full reproducibility, minimizes errors, and makes codes very easy to follow. If something needs to be changed, it is clear where one has to look.
-The entire code pipeline can then be submitted to e.g. a journal for its replication packages.
+The code is organised as modular tasks. Each task has an input, a function and an output, and the output of one task is the input of the next. Every task has a master file that initialises the task (erases previous results), runs the scripts and creates the output. `tasks/_master_call.py` runs all tasks in order.
 
-### 3.2 Getting started
+| Task | What it does | Main modules |
+|---|---|---|
+| `task0_random_data` | Generates synthetic B2B and firm data with the project's variable names, for testing | `create_random_B2B.py`, `random_firm_data.py`, `quarterly_firm_data.py` |
+| `task1_sum_stats` | Summary statistics of the raw input tables | `sum_stat.py` |
+| `task2_clean_data` | Cleans both tables (for example bilateral sales above total turnover), merges them and builds the panel | `clean_B2B_df.py`, `clean_firm_df.py`, `merge_and_clean_data.py`, `create_panel.py` |
+| `task3_network_statistics` | Network statistics per year: degree distributions and CCDFs with tail exponents, concentration, within industry correlations, coefficients of variation of input and output shares within sector pairs, the firm size variance decomposition, and the monetary policy counterfactual | `ccdf.py`, `distributions.py`, `ext_mgn_correlations.py`, `coefficients_of_variation.py`, `var_decomposition.py`, `monpol.py` |
 
-#### 3.2.1 Required libraries
-First, copy or download this repository to your local machine by either cloning it via Git or downloading the ZIP file and extracting it. Next, create and activate a new virtual environment on your local machine with Python version 3.12.4. Once the environment is set up, navigate to the project directory and install the required dependencies using the command:
+`tasks/common/` holds the configuration loader and shared utilities. `tasks/raw_data/` holds, next to your input tables, the Belgian impulse response estimates and World Bank GDP data used by the monetary policy counterfactual (see [`tasks/raw_data/README.md`](tasks/raw_data/README.md)).
 
-`pip install -r requirements.txt`
+## Join the network
 
-After the dependencies are installed, you can run the Python script by executing the _master_call.py file in the folder 'tasks'. Make sure the virtual environment is activated to ensure that the installed dependencies are available when running the code.
+Every additional country makes the benchmark more useful. If your institution holds firm-to-firm transaction data (VAT listings, e-invoicing, payment data) and firm level accounts, the sequence is: a zero commitment pilot on the synthetic data (task 0), a call with the coordinating team, then a full run on your data. What you get: a cross country benchmark for your economy and the possibility to participate in extensions of the project and follow-up research. Contact any of the three coordinators.
 
-#### 3.2.2 Configuration file
-The configuration file is a text file located in 'tasks/config'. Here you can set the data that you wish to use ('real' or 'random', if you wish to test the code) and the name of the files containing the data (supported extensions are .dta or .csv). Moreover, you can also set the range of years for which you wish to generate or analyze the data. If you are using real data, after specifying the exact name of the file (paired with the file extension), do not forget to add the file in the folder 'raw_data'.
+## Data protection and governance
 
-#### 3.2.3 Structure of the data
-The B2B transactions dataset should be a panel containing the following variables: 'year', 'vat_i', 'vat_j', 'sales_ij'. The firm-level dataset contains instead the following variables: 'year', 'vat', 'nace', 'turnover', 'inputs_total'. It can be either in .dta or in .csv form.
+The project is a distributed micro data project. Each partner runs the code on its own premises under its own data protection rules, and reports only aggregate results with at least 5 observations per cell. No individual data, and no data points from which individual firms or transactions could be recovered, are reported. The full governance, workflow and reporting rules are in [`docs/GOVERNANCE.md`](docs/GOVERNANCE.md).
 
-### 3.3 Main script
-There is one main code script to rule them all. This script calls the master scripts for each task, which in turn call all the scripts within that task. 
+## Authors and institutions
 
-### 3.4 Task 0 - random data
-This task generates random datasets that have the same variable names as in the real data used for this project. The number of firms and links can be changed at will to test and debug codes.
+Paper authors: Glenn Magerman (ECARES, ULB, CEPR, CESifo), Alberto Palazzolo (ECARES, ULB and National Bank of Belgium), Emmanuel Dhyne (National Bank of Belgium), András Borsos (Magyar Nemzeti Bank), Dmitry Kulikov (Eesti Pank), Andrea Linarello (Banca d'Italia), Alari Paulus (Eesti Pank), Giacomo Romanini (Banca d'Italia), Martín Saldías (Banco de Portugal).
 
-### 3.5 Task 1 - clean data
-This task loads the data (either real or random), cleans the data checking for irregularities (e.g. bilateral sales higher than total turnover) and creates a single dataframe to be used for the analysis.
+The code was written by Alberto Palazzolo. The project started within the ECB's ChaMP research network.
 
-### 3.6 Task 2 - network statistics
-This task analyses the data and generates as output some general network statistics: number of firms, sellers and buyers, links, extensive and intensive margin degree distributions, correlations, etc. The task generates statistics for the whole panel and for each year, creating a specific folder for each of the years of your data.
+## License
 
-
-
-
+Code is released under the MIT License, see [`LICENSE`](LICENSE). The reported statistics in `moments/` and the figures reproduce aggregate results from the paper and remain subject to the relevant institutional publication and data governance rules. Please cite the paper when using them.

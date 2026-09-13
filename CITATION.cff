@@ -1,0 +1,40 @@
+cff-version: 1.2.0
+message: "If you use this code or these statistics, please cite the paper below."
+title: "Firm-to-firm production networks across five EU countries: code and key moments"
+type: software
+authors:
+  - family-names: Magerman
+    given-names: Glenn
+    affiliation: "ECARES, Université libre de Bruxelles"
+  - family-names: Palazzolo
+    given-names: Alberto
+    affiliation: "ECARES, Université libre de Bruxelles and National Bank of Belgium"
+  - family-names: Dhyne
+    given-names: Emmanuel
+    affiliation: "National Bank of Belgium"
+repository-code: "https://github.com/glennmagerman/ECB_multicountry"
+license: MIT
+preferred-citation:
+  type: report
+  title: "Beyond firm size: network position and shock transmission in firm-to-firm production networks across five economies"
+  year: 2026
+  authors:
+    - family-names: Magerman
+      given-names: Glenn
+    - family-names: Palazzolo
+      given-names: Alberto
+    - family-names: Dhyne
+      given-names: Emmanuel
+    - family-names: Borsos
+      given-names: András
+    - family-names: Kulikov
+      given-names: Dmitry
+    - family-names: Linarello
+      given-names: Andrea
+    - family-names: Paulus
+      given-names: Alari
+    - family-names: Romanini
+      given-names: Giacomo
+    - family-names: Saldías
+      given-names: Martín
+  notes: "Working paper, September 2026."

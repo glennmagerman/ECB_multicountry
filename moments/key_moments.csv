@@ -1,0 +1,44 @@
+moment,description,unit,BE,EE,HU,IT,PT,source
+firms,"Firms with positive sales and at least one B2B transaction, 2019",count,544104,103592,315259,1668485,459548,Table 1
+sellers,Firms observed as sellers,count,383547,62283,257522,1018578,367686,Table 1
+buyers,Firms observed as buyers,count,540368,93369,226289,1657712,458572,Table 1
+relationships,Supplier-customer pairs with positive annual flow,count,13102712,841823,2122561,59427029,38735197,Table 1
+density_firm,"Network density, firm level (links / firms^2)",share,4.4e-05,7.8e-05,2.1e-05,2.1e-05,0.00018,Table 6
+density_nace4,"Network density, NACE 4-digit sector network",share,0.54,0.24,0.29,0.58,0.62,Table 6
+density_nace2,"Network density, NACE 2-digit sector network",share,0.95,0.8,0.78,0.91,0.93,Table 6
+within_share_nace2,"Within-sector (diagonal) share of intermediate inputs, NACE 2-digit",share,0.172,0.101,0.159,0.222,0.079,Table 6
+within_share_nace4,"Within-sector (diagonal) share of intermediate inputs, NACE 4-digit",share,0.005,0.005,0.07,0.083,0.049,Table 6
+top10_firms_sales,"Share of network sales, top 10% of firms",share,0.89,0.81,0.86,0.87,0.87,Table 2A
+top1_firms_sales,"Share of network sales, top 1% of firms",share,0.64,0.45,0.59,0.61,0.63,Table 2A
+top10_links_sales,"Share of bilateral sales value, top 10% of relationships",share,0.92,0.81,0.86,0.93,0.96,Table 2B
+top1_links_sales,"Share of bilateral sales value, top 1% of relationships",share,0.72,0.5,0.61,0.72,0.79,Table 2B
+customers_per_firm_mean,"Number of customers per firm, mean",count,24.1,8.1,6.7,35.6,84.3,Table B.2
+customers_per_firm_p50,"Number of customers per firm, p50",count,2,1,2,1,6,Table B.2
+customers_per_firm_p90,"Number of customers per firm, p90",count,35,15,12,56,137,Table B.2
+customers_per_firm_p95,"Number of customers per firm, p95",count,83,29,23,125,295,Table B.2
+customers_per_firm_p99,"Number of customers per firm, p99",count,343,110,85,459,1074,Table B.2
+suppliers_per_firm_mean,"Number of suppliers per firm, mean",count,24.1,8.1,8.6,35.6,84.3,Table B.3
+suppliers_per_firm_p50,"Number of suppliers per firm, p50",count,11,2,2,12,50,Table B.3
+suppliers_per_firm_p90,"Number of suppliers per firm, p90",count,55,17,18,90,184,Table B.3
+suppliers_per_firm_p95,"Number of suppliers per firm, p95",count,84,32,33,139,263,Table B.3
+suppliers_per_firm_p99,"Number of suppliers per firm, p99",count,205,99,117,310,578,Table B.3
+tail_exp_total_sales,"Power law tail exponent, total sales (Hill, Clauset et al. cutoff)",exponent,0.8646,0.9757,0.9224,1.1293,0.9144,Table B.1
+tail_exp_network_sales,"Power law tail exponent, network sales",exponent,0.9795,1.0345,1.0027,1.0924,0.8783,Table B.1
+tail_exp_customers,"Power law tail exponent, number of customers",exponent,1.3901,1.4704,1.6241,1.457,1.3713,Table B.1
+tail_exp_suppliers,"Power law tail exponent, number of suppliers",exponent,1.7805,1.8169,1.8337,2.4025,1.9987,Table B.1
+corr_sales_customers,"Corr(ln sales, ln n customers), within NACE 2-digit",correlation,0.55,0.64,0.59,0.59,0.54,Table 3
+corr_sales_suppliers,"Corr(ln sales, ln n suppliers), within NACE 2-digit",correlation,0.71,0.78,0.74,0.74,0.63,Table 3
+corr_sales_upstreamness,"Corr(ln sales, ln upstreamness), within NACE 2-digit",correlation,0.01,-0.1,-0.04,0.06,-0.03,Table 3
+corr_sales_downstreamness,"Corr(ln sales, ln downstreamness), within NACE 2-digit",correlation,-0.03,0.01,0.06,0.04,-0.15,Table 3
+corr_upstreamness_downstreamness,"Corr(ln upstreamness, ln downstreamness), within NACE 2-digit",correlation,-0.03,0.17,0.17,-0.01,-0.01,Table 3
+vardecomp_seller_fe,Firm size variance share: seller fixed effect (psi),share,0.18,0.21,0.22,0.16,0.19,Table 4
+vardecomp_n_customers,Firm size variance share: number of customers,share,0.46,0.45,0.42,0.51,0.49,Table 4
+vardecomp_avg_customer,Firm size variance share: average customer fixed effect (theta bar),share,0.05,0.03,0.04,0.05,0.02,Table 4
+vardecomp_covariance,Firm size variance share: customer size and match covariance (Omega),share,0.2,0.21,0.22,0.26,0.23,Table 4
+vardecomp_final_demand,Firm size variance share: sales outside the network (beta),share,0.12,0.1,0.11,0.01,0.07,Table 4
+cv_input_share_nace2_p50,Median CV of firm-level input shares within NACE 2-digit sector pairs,ratio,3.01,1.91,2.05,3.56,3.6,Table 7
+cv_input_share_nace2_p10,p10 of the same,ratio,1.52,0.98,1.07,1.82,1.75,Table 7
+cv_input_share_nace2_p90,p90 of the same,ratio,5.58,3.43,3.58,6.06,7.57,Table 7
+cv_input_share_nace4_p50,Median CV of firm-level input shares within NACE 4-digit sector pairs,ratio,1.69,1.27,1.34,1.82,1.85,Table 7
+mp_sales_share_upstream,Share of aggregate sales response to an ECB shock carried by firms with upstreamness > 4 (counterfactual on Belgian estimates),share,0.29,0.03,0.05,0.46,0.21,Table 9
+mp_price_share_upstream,Share of aggregate price response carried by firms with upstreamness > 4 (same),share,0.21,0.02,0.04,0.73,0.46,Table 9
