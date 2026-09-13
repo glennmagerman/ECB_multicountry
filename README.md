@@ -83,7 +83,7 @@ The code is organised as modular tasks. Each task has an input, a function and a
 
 ## Join the network
 
-Every additional country makes the benchmark more useful. If your institution holds firm-to-firm transaction data (VAT listings, e-invoicing, payment data) and firm level accounts, the sequence is: a zero commitment pilot on the synthetic data (task 0), a call with the coordinating team, then a full run on your data. What you get: a cross country benchmark for your economy and the possibility to participate in extensions of the project and follow-up research. Contact any of the three coordinators.
+Every additional country makes the benchmark more useful. If your institution holds firm-to-firm transaction data (VAT listings, e-invoicing, payment data) and firm level accounts, the sequence is: a zero commitment pilot on the synthetic data (task 0), a call with the coordinating team, then a full run on your data. What you get: a cross country benchmark for your economy and the possibility to participate in extensions of the project and follow-up research. Contact Glenn Magerman.
 
 ## Data protection and governance
 
