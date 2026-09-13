@@ -2,7 +2,7 @@
 
 Harmonised firm-to-firm production networks for Belgium, Estonia, Hungary, Italy and Portugal, built from administrative VAT and e-invoicing records within the ECB's [Challenges for Monetary Policy Transmission in a Changing World (ChaMP)](https://www.ecb.europa.eu/pub/economic-research/research-networks/html/champ.en.html) research network.
 
-Coordinated by [Glenn Magerman](mailto:glenn.magerman@ulb.be) (ECARES, ULB), [Alberto Palazzolo](mailto:alberto.palazzolo@nbb.be) (ECARES and NBB) and [Emmanuel Dhyne](mailto:emmanuel.dhyne@nbb.be) (NBB).
+Coordinated by [Glenn Magerman](mailto:glenn.magerman@ulb.be) (ECARES, ULB), [Alberto Palazzolo](mailto:alberto.palazzolo@nbb.be) (NBB) and [Emmanuel Dhyne](mailto:emmanuel.dhyne@nbb.be) (NBB).
 
 This repository holds three things:
 
